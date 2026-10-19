@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Helly-Co Services — versions de la pub</title>
+<style>
+@font-face {
+  font-family: "Archivo";
+  src: url("fonts/archivo-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+}
+:root {
+  --vert: #A5CD39;
+  --vert-fonce: #6E8F1A;
+  --papier: #F2F3F4;
+  --encre: #26272B;
+  --gris: #6B6C70;
+  --trait: #DADCDF;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--papier); color: var(--encre);
+  font-family: "Archivo", Arial, sans-serif; font-size: 17px; line-height: 1.5;
+  padding: 0 20px 64px;
+}
+main { max-width: 980px; margin: 0 auto; }
+
+header { display: flex; align-items: center; gap: 16px; padding: 28px 0 8px; }
+.m { position: relative; width: 44px; height: 50px; flex: none; }
+.m img { position: absolute; inset: 0; width: 100%; }
+header > img { height: 40px; }
+
+h1 { font-size: clamp(30px, 6vw, 48px); font-stretch: 108%; font-weight: 750; letter-spacing: -0.02em; line-height: 1.08; margin-top: 36px; }
+.intro { color: var(--gris); max-width: 62ch; margin-top: 14px; }
+
+.version { margin-top: 56px; padding-top: 28px; border-top: 2px solid var(--trait); }
+.version h2 { font-size: 24px; font-weight: 700; line-height: 1.25; }
+.version h2 span { color: var(--vert-fonce); font-weight: 800; margin-right: 8px; }
+.version p { color: var(--gris); margin-top: 6px; max-width: 62ch; }
+video, .attente {
+  display: block; width: 100%; aspect-ratio: 16 / 9; margin-top: 18px;
+  background: #1C1D20; border-radius: 6px;
+}
+.attente {
+  display: grid; place-items: center; background: #E6E7E9; color: var(--gris);
+  border: 2px dashed #C9CACD; text-align: center; padding: 20px;
+}
+.recommandee { display: inline-block; margin-top: 10px; padding: 3px 10px; border-radius: 99px;
+  background: var(--vert); color: var(--encre); font-size: 14px; font-weight: 700; }
+
+footer { margin-top: 64px; color: var(--gris); font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="m"><img src="img/mark-vert.png" alt=""><img src="img/mark-gris.png" alt=""></div>
+    <img src="img/texte-sur-clair.png" alt="Helly-Co Services">
+  </header>
+
+  <h1>La pub pour l’écran de la boutique</h1>
+  <p class="intro">Chaque version tourne en boucle sur la télé, au format 16:9. Regardez-les en plein écran, puis dites-nous laquelle vous préférez et ce qu’il faut changer.</p>
+
+  <section class="version">
+    <h2><span>3</span>Avec des dessins</h2>
+    <div class="recommandee">La plus récente</div>
+    <p>Le vrai logo et ses couleurs, avec des scènes dessinées : l’iPhone réparé, le technicien, le transfert d’euros en dirhams, l’aide aux papiers en arabe.</p>
+    <video controls playsinline preload="metadata" poster="videos/v3-dessins.jpg" src="videos/v3-dessins.mp4"></video>
+  </section>
+
+  <section class="version">
+    <h2><span>2</span>Aux couleurs du logo, sans dessins</h2>
+    <p>Le même déroulé en version plus sobre : texte, logo animé et téléphone réparé.</p>
+    <video controls playsinline preload="metadata" poster="videos/v2-couleurs-logo.jpg" src="videos/v2-couleurs-logo.mp4"></video>
+  </section>
+
+  <section class="version">
+    <h2><span>1</span>Premier essai, en bleu et orange</h2>
+    <p>Faite avant d’avoir le logo, avec les couleurs de l’ancienne affiche.</p>
+    <video controls playsinline preload="metadata" poster="videos/v1-bleu-orange.jpg" src="videos/v1-bleu-orange.mp4"></video>
+  </section>
+
+  <section class="version">
+    <h2><span>4</span>Avec des photos</h2>
+    <p>Le même déroulé avec de vraies photos à la place des dessins.</p>
+    <div class="attente">En préparation</div>
+  </section>
+
+  <footer>Page de travail pour choisir la version.</footer>
+</main>
+</body>
+</html>
