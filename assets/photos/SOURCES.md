@@ -19,3 +19,26 @@
 | hd/monde.jpg, monnaies-monde.jpg | https://www.pexels.com/photo/assorted-currency-paper-bills-5746260/ et https://pixabay.com/photos/money-banknotes-currency-forex-1578510/ |
 | hd/conseil.jpg, conseil.jpg | Pexels, recherche « financial advisor » (conseiller âgé et client) |
 | euros-50.jpg | https://pixabay.com/photos/euro-note-office-business-2584724/ |
+
+## Photos ajoutées pour la v9 (boucle de 5 minutes), toutes Pexels
+
+| Fichier | Source |
+|---|---|
+| hd/toutes-marques.jpg | https://www.pexels.com/search/smartphones/ |
+| hd/iphone-noir.jpg | https://www.pexels.com/search/mobile%20phone/ |
+| hd/main-tel.jpg | https://www.pexels.com/search/mobile/ |
+| hd/femme-tel.jpg | https://www.pexels.com/search/using%20smartphone/ |
+| hd/recharge-deux.jpg | https://www.pexels.com/search/phone%20charger/ |
+| hd/iphone-charge.jpg | https://www.pexels.com/search/phone%20charging/ |
+| hd/chargeur.jpg | https://www.pexels.com/search/charger/ |
+| hd/cables.jpg | https://www.pexels.com/photo/white-power-bank-and-blue-coated-wires-4072683/ |
+| hd/coques.jpg | https://www.pexels.com/search/phone%20camera/ |
+| hd/signature.jpg | https://www.pexels.com/search/signing%20document/ |
+| hd/formulaire.jpg | https://www.pexels.com/search/job%20application/ |
+| hd/passeports.jpg | https://www.pexels.com/search/visa/ |
+| hd/duo-documents.jpg | https://www.pexels.com/search/reviewing%20documents/ |
+| hd/classeurs.jpg | https://www.pexels.com/search/files/ |
+| hd/photocopieuse.jpg | https://www.pexels.com/search/scanner/ |
+| hd/copieuse-femme.jpg | https://www.pexels.com/photo/woman-using-a-photocopier-3791246/ |
+| hd/famille.jpg | https://www.pexels.com/search/family%20together/ |
+| hd/appel-video.jpg | https://www.pexels.com/search/video%20chat/ |
