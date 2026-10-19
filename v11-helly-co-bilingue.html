@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Helly-Co Services — bilingue</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face {
+  font-family: "Archivo";
+  src: url("fonts/archivo-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+}
+:root { --vert: #A5CD39; --vert-fonce: #6E8F1A; --nuit: #1E1F22; --papier: #F2F3F4; --encre: #1E1F22; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #000; overflow: hidden; cursor: none; }
+#stage {
+  position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden;
+  background: var(--nuit); color: #fff; font-family: "Archivo", Arial, sans-serif;
+}
+.scene { position: absolute; inset: 0; visibility: hidden; overflow: hidden; background: var(--nuit); }
+.scene.clair { background: var(--papier); color: var(--encre); }
+.scene.verte { background: var(--vert); color: var(--encre); }
+
+.plein { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform, opacity; }
+.moitie { position: absolute; top: 0; bottom: 0; width: 50%; overflow: hidden; }
+.moitie.g { left: 0; } .moitie.d { right: 0; }
+.moitie img { width: 100%; height: 100%; object-fit: cover; will-change: transform; }
+.voile { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.75) 100%); }
+.voile.fort { background: linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(0,0,0,.8) 100%); }
+
+.decoupe { position: absolute; inset: 0; width: 100%; height: 100%; }
+.decoupe text { font-family: "Archivo", Arial, sans-serif; font-weight: 900; font-stretch: 100%; letter-spacing: -0.03em; }
+
+/* Grands mots blancs posés sur la photo */
+.gros { position: absolute; left: 110px; bottom: 290px; font-weight: 900; letter-spacing: -0.04em; line-height: .92; }
+.gros.t300 { font-size: 300px; } .gros.t200 { font-size: 190px; } .gros.t140 { font-size: 140px; }
+.l { display: block; overflow: hidden; padding-bottom: 0.08em; }
+.l > span { display: block; }
+
+.legende { position: absolute; left: 120px; bottom: 110px; max-width: 1350px; }
+.legende b { display: block; color: var(--vert); font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+.legende p { font-size: 46px; line-height: 1.2; font-weight: 450; }
+
+/* Diptyque : deux photos, deux étiquettes */
+.etiq { position: absolute; top: 90px; padding: 12px 28px; border-radius: 99px; background: #fff; color: var(--encre); font-size: 34px; font-weight: 700; }
+
+/* Rafale de mots */
+.etiquette { position: absolute; left: 120px; top: 110px; color: var(--vert); font-size: 36px; font-weight: 700; }
+.clair .etiquette { color: var(--vert-fonce); }
+.rafale span {
+  position: absolute; left: 110px; top: 50%; transform: translateY(-55%);
+  font-size: 250px; font-weight: 900; letter-spacing: -0.04em; white-space: nowrap; opacity: 0;
+}
+.rafale span:last-child { color: var(--vert); }
+.clair .rafale span:last-child { color: var(--vert-fonce); }
+
+/* Cartes vertes */
+.carte { position: absolute; left: 120px; right: 120px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; }
+.carte .ligne { font-size: 130px; font-weight: 900; letter-spacing: -0.035em; line-height: 1; }
+.carte .ligne.moyen { font-size: 96px; }
+.carte .petit { margin-top: 50px; font-size: 48px; font-weight: 500; }
+.carte .liste { list-style: none; margin-top: 10px; }
+.carte .liste li { font-size: 80px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.22; }
+.carte .liste li::before { content: ""; display: inline-block; width: 26px; height: 26px; background: var(--encre); margin: 0 30px 12px 0; }
+.nuit .carte .liste li::before { background: var(--vert); }
+
+/* Questions qui s'enchaînent */
+.questions { position: relative; height: 150px; }
+.questions span { position: absolute; left: 0; top: 0; font-size: 130px; font-weight: 900; letter-spacing: -0.035em; white-space: nowrap; opacity: 0; }
+
+/* Langues */
+.langues { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding-left: 120px; }
+.langues .mot { font-size: 170px; font-weight: 900; letter-spacing: -0.035em; line-height: 1.15; }
+.langues .ar { font-family: "Segoe UI", Tahoma, Arial, sans-serif; font-weight: 700; letter-spacing: 0; color: var(--vert); }
+.langues .petit { margin-top: 40px; font-size: 48px; color: #C4C6CA; }
+
+.bulle {
+  position: absolute; padding: 18px 34px 24px; border-radius: 28px; background: #fff; color: var(--encre);
+  font: 46px/1.2 "Segoe UI", Tahoma, Arial, sans-serif; direction: rtl; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+.bulle::after { content: ""; position: absolute; bottom: -14px; width: 30px; height: 30px; background: #fff; transform: rotate(45deg); }
+.bulle.g::after { left: 60px; } .bulle.d::after { right: 60px; }
+
+/* Logo et horaires */
+.centre { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.mark { position: relative; width: 300px; height: 345px; }
+.mark img { position: absolute; inset: 0; width: 100%; }
+.mot-logo { width: 420px; margin-top: 26px; }
+.accroche { margin-top: 60px; font-size: 56px; font-weight: 450; color: #C4C6CA; }
+.duo { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 140px; }
+.duo .mark { width: 260px; height: 299px; }
+.duo .mot-logo { width: 360px; }
+.horaires { font-size: 54px; line-height: 1.3; }
+.horaires h2 { font-size: 34px; color: var(--vert); margin-bottom: 18px; }
+.horaires div { padding: 18px 0; }
+.horaires div + div { border-top: 3px solid #3A3B40; }
+.horaires span { display: block; color: #9A9BA0; font-size: 34px; }
+
+#coin { position: absolute; right: 90px; bottom: 96px; height: 54px; display: flex; gap: 14px; align-items: center; opacity: .9; }
+#coin .m { position: relative; width: 46px; height: 53px; }
+#coin .m img { position: absolute; inset: 0; width: 100%; }
+#coin > img { height: 44px; }
+#coin .pour-clair { display: none; }
+#stage.clair #coin .pour-clair { display: block; }
+#stage.clair #coin .pour-fonce { display: none; }
+
+/* ——— Bilingue : chaque message a sa traduction arabe ——— */
+:root { --nuit: #23211F; }
+.ar { display: block; text-align: left; font-family: "Segoe UI", Tahoma, Arial, sans-serif; unicode-bidi: plaintext; letter-spacing: 0; font-weight: 600; }
+.gros .ar > span { font-size: .42em; color: var(--vert); line-height: 1.3; }
+.gros.t300 { font-size: 220px; } .gros.t200 { font-size: 160px; } .gros.t140 { font-size: 120px; }
+.legende p { font-size: 40px; }
+.legende p.ar { margin-top: 4px; color: #E4E5E8; font-weight: 500; }
+.legende b .ar-i, .etiquette .ar-i, .etiq .ar-i { font-family: "Segoe UI", Tahoma, Arial, sans-serif; margin-left: 16px; }
+.rafale span small.ar { font-size: 90px; margin-top: 10px; color: #C4C6CA; }
+.clair .rafale span small.ar { color: #6B6C70; }
+.questions { height: 260px; }
+.questions span small.ar { font-size: 72px; margin-top: 6px; }
+.carte .ligne .ar > span { font-size: .5em; }
+.carte .petit .ar { margin-top: 8px; }
+.carte .liste li { font-size: 66px; }
+.carte .liste li .ar-i { font-family: "Segoe UI", Tahoma, Arial, sans-serif; font-weight: 600; font-size: .7em; margin-left: 28px; opacity: .75; }
+.accroche .ar { margin-top: 10px; color: var(--vert); }
+.horaires { font-size: 46px; }
+.horaires .ar { font-size: 34px; color: var(--vert); font-weight: 500; }
+.horaires h2 .ar { display: inline; margin-left: 16px; font-size: 34px; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="scenes"></div>
+  <div id="coin">
+    <div class="m"><img src="assets/mark-vert.png" alt=""><img class="pour-fonce" src="assets/mark-blanc.png" alt=""><img class="pour-clair" src="assets/mark-gris.png" alt=""></div>
+    <img class="pour-fonce" src="assets/texte-sur-fonce.png" alt="">
+    <img class="pour-clair" src="assets/texte-sur-clair.png" alt="">
+  </div>
+</div>
+
+<script>
+// ————————————————————————————————————————————————————————————————
+// La boucle est décrite ici, scène par scène. Pour la modifier, il suffit
+// d'éditer cette liste : la page construit les scènes toute seule.
+// ————————————————————————————————————————————————————————————————
+const P = n => `assets/photos/hd/${n}.jpg`;
+const HORAIRES = { type: 'horaires', dur: 8 };
+const LISTE = [
+  { type: 'logo', dur: 6.5, accroche: 'Un seul comptoir.' },
+  { type: 'index', dur: 7, titre: 'Ici, on s’occupe de :', items: ['Réparation de téléphone', 'Accessoires', 'Transfert d’argent', 'Démarches administratives', 'Bureautique'] },
+
+  // ——— Réparation ———
+  { type: 'decoupe', dur: 12, mot: 'Cassé.', photos: ['casse', ['tournevis', 5.2], ['iphones', 8.6]], reponse: ['Réparé.', 5.9],
+    legendes: [['Réparation de téléphone', 'Écran, batterie, prise de charge, caméra.', 4.0, 8.4], ['Réparation de téléphone', 'Tous les téléphones, toutes les marques. Ici, en boutique.', 8.8]] },
+  { type: 'rafale', dur: 7.5, etiquette: 'Réparation de téléphone', mots: ['Écran.', 'Batterie.', 'Prise de charge.', 'Caméra.', 'Haut-parleur.', 'Micro.', 'Vitre arrière.'] },
+  { type: 'photo', dur: 8, photo: 'toutes-marques', kb: 'out', gros: ['Toutes', 'les marques.'], taille: 't200', legende: ['Réparation de téléphone', 'Quel que soit votre téléphone, on regarde avec vous.'] },
+  { type: 'questions', dur: 9, questions: ['Écran cassé ?', 'Batterie qui lâche ?', 'Ne charge plus ?', 'Plus de son ?'], reponse: 'On répare.', petit: 'Passez au comptoir.' },
+  { type: 'diptyque', dur: 8, g: 'casse', d: 'iphone-noir', etiqs: ['Avant', 'Après'], legende: ['Réparation de téléphone', 'Écran remplacé, téléphone comme vous l’aimez.'] },
+  { type: 'photo', dur: 8, photo: 'carte-mere', kb: 'gauche', gros: ['Ouvert.', 'Réparé.', 'Refermé.'], taille: 't140', legende: ['Réparation de téléphone', 'Le travail se fait ici, en boutique.'] },
+  { type: 'photo', dur: 8, photo: 'homme-tel', kb: 'in', gros: ['Sans téléphone,', 'plus rien ne marche.'], taille: 't140', legende: ['Réparation de téléphone', 'Ne restez pas sans. On le répare ici.'] },
+
+  // ——— Accessoires ———
+  { type: 'photo', dur: 7, photo: 'coques', kb: 'in', gros: ['Coques.'], taille: 't300', legende: ['Accessoires', 'Coques et protections pour votre téléphone.'] },
+  { type: 'diptyque', dur: 7.5, g: 'chargeur', d: 'iphone-charge', mot: 'Chargé.', legende: ['Accessoires', 'Chargeurs et câbles.'] },
+  { type: 'photo', dur: 7, photo: 'cables', kb: 'droite', gros: ['Câbles.'], taille: 't300', legende: ['Accessoires', 'Le bon câble pour votre téléphone.'] },
+  { type: 'rafale', dur: 6.5, etiquette: 'Accessoires', mots: ['Câbles.', 'Chargeurs.', 'Coques.', 'Protections.', 'Recharges.'] },
+  { type: 'photo', dur: 7, photo: 'recharge-deux', kb: 'out', gros: ['Prêt', 'à repartir.'], taille: 't200', legende: ['Accessoires', 'Câbles, chargeurs, coques, protections et recharges.'] },
+  HORAIRES,
+
+  // ——— Transfert d'argent ———
+  { type: 'decoupe', dur: 12, mot: 'Envoyé.', photos: ['billets-50', ['main-50', 4.4]], split: ['dirhams', 'monde', 6.6], reponse: ['Reçu.', 7.4],
+    legendes: [['Transfert d’argent', 'Western Union, MoneyGram, Ria. En espèces ou par carte.', 4.0, 6.6], ['Transfert d’argent', 'Au Maroc et partout dans le monde, en toute sécurité.', 7.0]] },
+  { type: 'photo', dur: 8, photo: 'famille-musulmane', kb: 'in', gros: ['À vos proches,', 'où qu’ils soient.'], taille: 't140', legende: ['Transfert d’argent', 'Envoyez de l’argent à votre famille, en toute sécurité.'] },
+  { type: 'carte', dur: 7, lignes: ['Western Union.', 'MoneyGram.', 'Ria.'], petit: 'En espèces ou par carte.' },
+  { type: 'decoupe', dur: 10, mot: 'Partout.', photos: ['monde'], legendes: [['Transfert d’argent', 'Au Maroc, en Afrique, en Europe et ailleurs.', 3.9]] },
+  { type: 'questions', dur: 9, questions: ['Au Maroc ?', 'En Europe ?', 'En Afrique ?', 'Plus loin ?'], reponse: 'On envoie.', petit: 'Western Union, MoneyGram, Ria.' },
+  { type: 'photo', dur: 8, photo: 'appel-homme', kb: 'gauche', gros: ['Envoyé ici.', 'Reçu là-bas.'], taille: 't140', legende: ['Transfert d’argent', 'Western Union, MoneyGram, Ria.'] },
+  { type: 'langues', dur: 9 },
+
+  // ——— Démarches ———
+  { type: 'decoupe', dur: 12, mot: 'Compliqué.', photos: ['conseil'], reponse: ['Expliqué.', 7.4], bulles: true,
+    legendes: [['Démarches administratives', 'Préfecture, consulats, dossiers. En français, en arabe et en anglais.', 4.2]] },
+  { type: 'questions', dur: 9, questions: ['Rendez-vous introuvable ?', 'Formulaire en ligne ?', 'Dossier à compléter ?'], reponse: 'On vous aide.', petit: 'Préfecture, consulats, démarches.' },
+  { type: 'rafale', dur: 6.5, etiquette: 'Démarches administratives', mots: ['Préfecture.', 'Consulats.', 'Rendez-vous.', 'Formulaires.', 'Dossiers.'] },
+  { type: 'photo', dur: 8, photo: 'formulaire', kb: 'in', gros: ['Un formulaire', 'à remplir ?'], taille: 't140', legende: ['Démarches administratives', 'On le remplit avec vous.'] },
+  { type: 'diptyque', dur: 8, g: 'passeports', d: 'signature', mot: 'Rempli. Signé.', legende: ['Démarches administratives', 'Préfecture, consulats, rendez-vous.'] },
+  { type: 'photo', dur: 8, photo: 'deux-hommes-documents', kb: 'droite', gros: ['Pas à pas,', 'avec vous.'], taille: 't140', legende: ['Démarches administratives', 'En français, en arabe et en anglais.'] },
+  HORAIRES,
+
+  // ——— Bureautique ———
+  { type: 'decoupe', dur: 10, mot: 'Imprimé.', photos: ['photocopieuse', ['atelier-impression', 5.8]], legendes: [['Bureautique', 'Impressions, photocopies et scans sur place.', 3.9]] },
+  { type: 'rafale', dur: 6.5, clair: true, etiquette: 'Bureautique', mots: ['Impressions.', 'Photocopies.', 'Scans.', 'Reliures.', 'Plastifications.'] },
+  { type: 'questions', dur: 9, questions: ['Un document à imprimer ?', 'Une photocopie ?', 'Un scan ?'], reponse: 'C’est ici.', petit: 'Reliures et plastifications aussi.' },
+  { type: 'photo', dur: 8, photo: 'classeurs', kb: 'gauche', gros: ['Relié.', 'Plastifié.'], taille: 't200', legende: ['Bureautique', 'Reliures et plastifications.'] },
+  { type: 'photo', dur: 8, photo: 'main-tel', kb: 'in', gros: ['Écran noir ?', 'Batterie à plat ?'], taille: 't140', legende: ['Réparation de téléphone', 'On le répare ici.'] },
+  { type: 'index', dur: 8, nuit: true, titre: 'Un seul comptoir pour tout ça :', items: ['Réparation de téléphone', 'Accessoires', 'Transfert d’argent', 'Démarches administratives', 'Bureautique'] },
+  { type: 'fin', dur: 11 },
+];
+
+// ——— Fabrication des scènes ———
+const lignes = (mots, debut, pas = 0.2) => mots.map((m, i) => `<span class="l" data-at="${debut + i * pas}"><span>${m}</span></span>`).join('');
+const legende = (b, p, at, fin) => `<div class="legende" data-fx="fade" data-at="${at}"${fin ? ` data-fin="${fin}"` : ''}><b>${b}</b><p>${p}</p></div>`;
+let nMasque = 0;
+const masque = (mot, zoom) => {
+  const id = `m${nMasque++}`;
+  return `<svg class="decoupe" viewBox="0 0 1920 1080" data-zoom="${zoom}">
+    <defs><mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
+      <rect width="1920" height="1080" fill="#fff"/><text x="960" y="700" text-anchor="middle" fill="#000">${mot}</text>
+    </mask></defs><rect width="1920" height="1080" fill="#1E1F22" mask="url(#${id})"/></svg>`;
+};
+const logoBloc = (anime) => `<div class="mark"><img ${anime ? 'class="i-vert"' : ''} src="assets/mark-vert.png" alt=""><img ${anime ? 'class="i-blanc"' : ''} src="assets/mark-blanc.png" alt=""></div>
+  <img class="mot-logo" src="assets/texte-sur-fonce.png" alt="Helly-Co Services"${anime ? ' data-fx="fade" data-at="1.2"' : ''}>`;
+const blocHoraires = (at) => `<div class="horaires">
+  <h2 data-fx="fade" data-at="${at}">Nos horaires</h2>
+  <div data-fx="fade" data-at="${at + 0.3}"><span>Lundi au jeudi, samedi</span>9h30 – 19h00, sans interruption</div>
+  <div data-fx="fade" data-at="${at + 0.6}"><span>Vendredi</span>9h30 – 13h00 et 14h30 – 19h00</div></div>`;
+
+const FABRIQUE = {
+  logo: s => ({ html: `<div class="centre">${logoBloc(true)}<p class="accroche" data-fx="fade" data-at="2.0">${s.accroche}</p></div>`, hook: 'logo' }),
+  index: s => ({ cls: s.nuit ? 'nuit' : 'verte', coin: false, html: `<div class="carte">
+      <div class="petit" style="margin:0 0 30px" data-fx="fade" data-at="0.2">${s.titre}</div>
+      <ul class="liste">${s.items.map((t, i) => `<li data-fx="fade" data-at="${0.6 + i * 0.35}">${t}</li>`).join('')}</ul></div>` }),
+  decoupe: s => {
+    let h = '';
+    s.photos.forEach(p => { const [n, de] = Array.isArray(p) ? p : [p, 0]; h += `<img class="plein" src="${P(n)}" alt=""${de ? ` data-de="${de}"` : ''}>`; });
+    if (s.split) h += `<div class="moitie g" data-glisse="${s.split[2]}"><img src="${P(s.split[0])}" alt=""></div><div class="moitie d" data-glisse="${s.split[2]}"><img src="${P(s.split[1])}" alt=""></div>`;
+    h += `<div class="voile" data-fx="fade" data-at="3.8"></div>` + masque(s.mot, 2.7);
+    if (s.bulles) h += `<div class="bulle g" style="left: 360px; top: 60px" data-fx="fade" data-at="4.0" data-fin="6.4">السلام عليكم</div>
+      <div class="bulle d" style="right: 520px; top: 40px" data-fx="fade" data-at="5.0" data-fin="6.4">وعليكم السلام</div>
+      <div class="bulle d" style="right: 400px; top: 40px" data-fx="fade" data-at="6.7">ما تخافش، غادي نعاونك</div>`;
+    if (s.reponse) h += `<div class="gros t300">${lignes([s.reponse[0]], s.reponse[1])}</div>`;
+    s.legendes.forEach(([b, p, at, fin]) => h += legende(b, p, at, fin));
+    return { html: h, coin: true };
+  },
+  photo: s => ({ coin: true, html: `<img class="plein" src="${P(s.photo)}" alt="" data-kb="${s.kb}"><div class="voile fort" data-fx="fade" data-at="0"></div>
+      <div class="gros ${s.taille}">${lignes(s.gros, 0.6)}</div>${legende(s.legende[0], s.legende[1], 1.6)}` }),
+  diptyque: s => {
+    let h = `<div class="moitie g" data-glisse="0.1"><img src="${P(s.g)}" alt=""></div><div class="moitie d" data-glisse="0.5"><img src="${P(s.d)}" alt=""></div><div class="voile" data-fx="fade" data-at="0.8"></div>`;
+    if (s.etiqs) h += `<div class="etiq" style="left: 90px" data-fx="fade" data-at="1.0">${s.etiqs[0]}</div><div class="etiq" style="left: 1050px" data-fx="fade" data-at="1.6">${s.etiqs[1]}</div>`;
+    if (s.mot) h += `<div class="gros t200">${lignes([s.mot], 1.4)}</div>`;
+    return { coin: true, html: h + legende(s.legende[0], s.legende[1], 2.0) };
+  },
+  rafale: s => ({ cls: s.clair ? 'clair' : '', coin: true, hook: 'rafale', html: `<div class="etiquette" data-fx="fade" data-at="0.2">${s.etiquette}</div>
+      <div class="rafale">${s.mots.map((m, i) => `<span data-t="${(0.4 + i * (s.dur - 1.6) / s.mots.length).toFixed(2)}">${m}</span>`).join('')}</div>` }),
+  questions: s => ({ cls: 'verte', coin: false, hook: 'questions', html: `<div class="carte">
+      <div class="questions">${s.questions.map((q, i) => `<span data-t="${0.3 + i * 1.3}">${q}</span>`).join('')}</div>
+      <div class="ligne" style="margin-top: 60px">${lignes([s.reponse], 0.5 + s.questions.length * 1.3)}</div>
+      <div class="petit" data-fx="fade" data-at="${1.3 + s.questions.length * 1.3}">${s.petit}</div></div>` }),
+  carte: s => ({ cls: 'verte', coin: false, html: `<div class="carte"><div class="ligne">${lignes(s.lignes, 0.3, 0.35)}</div>
+      <div class="petit" data-fx="fade" data-at="1.8">${s.petit}</div></div>` }),
+  langues: () => ({ coin: true, html: `<div class="langues">
+      <div class="mot">${lignes(['Bonjour.'], 0.3)}</div>
+      <div class="mot ar" dir="rtl" style="text-align:left">${lignes(['السلام عليكم'], 1.3)}</div>
+      <div class="mot">${lignes(['Hello.'], 2.3)}</div>
+      <p class="petit" data-fx="fade" data-at="3.6">On vous répond en français, en arabe et en anglais.</p></div>` }),
+  horaires: () => ({ html: `<div class="duo"><div>${logoBloc(false)}</div>${blocHoraires(0.5)}</div>` }),
+  fin: () => ({ html: `<div class="duo"><div>${logoBloc(true)}</div>${blocHoraires(1.6)}</div>`, hook: 'logo' }),
+};
+
+const conteneur = document.getElementById('scenes');
+for (const s of LISTE) {
+  const f = FABRIQUE[s.type](s);
+  const el = document.createElement('section');
+  el.className = `scene ${f.cls || ''}`;
+  el.dataset.dur = s.dur;
+  if (f.hook) el.dataset.hook = f.hook;
+  if (f.coin) el.dataset.coin = 1;
+  el.innerHTML = f.html;
+  conteneur.appendChild(el);
+}
+
+
+// ——— Bilingue : on ajoute la traduction arabe sous chaque message ———
+const AR = {
+"Un seul comptoir.": "كل الخدمات في مكان واحد.",
+"Ici, on s’occupe de :": "هنا نهتم بـ:",
+"Un seul comptoir pour tout ça :": "كل هذا في مكان واحد:",
+"Réparation de téléphone": "إصلاح الهواتف",
+"Accessoires": "الإكسسوارات",
+"Transfert d’argent": "تحويل الأموال",
+"Démarches administratives": "الإجراءات الإدارية",
+"Bureautique": "الطباعة والنسخ",
+"Réparé.": "تم الإصلاح.",
+"Écran, batterie, prise de charge, caméra.": "الشاشة، البطارية، منفذ الشحن، الكاميرا.",
+"Tous les téléphones, toutes les marques. Ici, en boutique.": "جميع الهواتف وجميع الماركات، هنا في المحل.",
+"Écran.": "الشاشة",
+"Batterie.": "البطارية",
+"Prise de charge.": "منفذ الشحن",
+"Caméra.": "الكاميرا",
+"Haut-parleur.": "مكبر الصوت",
+"Micro.": "الميكروفون",
+"Vitre arrière.": "الزجاج الخلفي",
+"Toutes les marques.": "جميع الماركات.",
+"Quel que soit votre téléphone, on regarde avec vous.": "مهما كان هاتفك، نفحصه معك.",
+"Écran cassé ?": "شاشة مكسورة؟",
+"Batterie qui lâche ?": "بطارية ضعيفة؟",
+"Ne charge plus ?": "لا يشحن؟",
+"Plus de son ?": "لا يوجد صوت؟",
+"On répare.": "نصلحه.",
+"Passez au comptoir.": "تفضلوا عندنا.",
+"Avant": "قبل",
+"Après": "بعد",
+"Écran remplacé, téléphone comme vous l’aimez.": "شاشة جديدة، وهاتفك كما تحبه.",
+"Ouvert. Réparé. Refermé.": "نفتحه، نصلحه، نغلقه.",
+"Le travail se fait ici, en boutique.": "العمل يتم هنا في المحل.",
+"Sans téléphone, plus rien ne marche.": "بدون هاتف، لا شيء يعمل.",
+"Ne restez pas sans. On le répare ici.": "لا تبقوا بدونه، نصلحه هنا.",
+"Coques.": "أغطية الهاتف",
+"Coques et protections pour votre téléphone.": "أغطية وواقيات لهاتفك.",
+"Chargé.": "مشحون.",
+"Chargeurs et câbles.": "شواحن وكابلات.",
+"Câbles.": "الكابلات",
+"Le bon câble pour votre téléphone.": "الكابل المناسب لهاتفك.",
+"Chargeurs.": "الشواحن",
+"Protections.": "الواقيات",
+"Recharges.": "تعبئة الرصيد",
+"Prêt à repartir.": "جاهز للانطلاق.",
+"Câbles, chargeurs, coques, protections et recharges.": "كابلات، شواحن، أغطية، واقيات وتعبئة الرصيد.",
+"Reçu.": "تم الاستلام.",
+"Western Union, MoneyGram, Ria. En espèces ou par carte.": "ويسترن يونيون، موني غرام، ريا. نقدًا أو بالبطاقة.",
+"Au Maroc et partout dans le monde, en toute sécurité.": "إلى المغرب وإلى كل أنحاء العالم، بأمان تام.",
+"À vos proches, où qu’ils soient.": "إلى أحبائكم، أينما كانوا.",
+"Envoyez de l’argent à votre famille, en toute sécurité.": "أرسلوا المال إلى عائلتكم بأمان.",
+"En espèces ou par carte.": "نقدًا أو بالبطاقة.",
+"Au Maroc, en Afrique, en Europe et ailleurs.": "إلى المغرب، إفريقيا، أوروبا وغيرها.",
+"Au Maroc ?": "إلى المغرب؟",
+"En Europe ?": "إلى أوروبا؟",
+"En Afrique ?": "إلى إفريقيا؟",
+"Plus loin ?": "أبعد من ذلك؟",
+"On envoie.": "نرسل.",
+"Western Union, MoneyGram, Ria.": "ويسترن يونيون، موني غرام، ريا.",
+"Envoyé ici. Reçu là-bas.": "يُرسل من هنا، ويُستلم هناك.",
+"Expliqué.": "نشرح لكم.",
+"Préfecture, consulats, dossiers. En français, en arabe et en anglais.": "المحافظة، القنصليات، الملفات. بالفرنسية والعربية والإنجليزية.",
+"Rendez-vous introuvable ?": "لم تجدوا موعدًا؟",
+"Formulaire en ligne ?": "استمارة على الإنترنت؟",
+"Dossier à compléter ?": "ملف لإكماله؟",
+"On vous aide.": "نساعدكم.",
+"Préfecture, consulats, démarches.": "المحافظة، القنصليات، الإجراءات.",
+"Préfecture.": "المحافظة",
+"Consulats.": "القنصليات",
+"Rendez-vous.": "المواعيد",
+"Formulaires.": "الاستمارات",
+"Dossiers.": "الملفات",
+"Un formulaire à remplir ?": "استمارة لملئها؟",
+"On le remplit avec vous.": "نملؤها معكم.",
+"Rempli. Signé.": "مملوءة. موقّعة.",
+"Préfecture, consulats, rendez-vous.": "المحافظة، القنصليات، المواعيد.",
+"Pas à pas, avec vous.": "خطوة بخطوة، معكم.",
+"En français, en arabe et en anglais.": "بالفرنسية والعربية والإنجليزية.",
+"Impressions, photocopies et scans sur place.": "طباعة، نسخ ومسح ضوئي في عين المكان.",
+"Impressions.": "الطباعة",
+"Photocopies.": "النسخ",
+"Scans.": "المسح الضوئي",
+"Reliures.": "التجليد",
+"Plastifications.": "التغليف",
+"Un document à imprimer ?": "وثيقة للطباعة؟",
+"Une photocopie ?": "نسخة؟",
+"Un scan ?": "مسح ضوئي؟",
+"C’est ici.": "عندنا.",
+"Reliures et plastifications aussi.": "والتجليد والتغليف أيضًا.",
+"Relié. Plastifié.": "مجلّد. مغلّف.",
+"Reliures et plastifications.": "التجليد والتغليف.",
+"Écran noir ? Batterie à plat ?": "شاشة سوداء؟ بطارية فارغة؟",
+"On le répare ici.": "نصلحه هنا.",
+"Nos horaires": "أوقات العمل",
+"Lundi au jeudi, samedi": "من الإثنين إلى الخميس، والسبت",
+"9h30 – 19h00, sans interruption": "من 9:30 إلى 19:00 دون انقطاع",
+"Vendredi": "الجمعة",
+"9h30 – 13h00 et 14h30 – 19h00": "من 9:30 إلى 13:00 ومن 14:30 إلى 19:00"
+};
+const ar = t => AR[t.replace(/\s+/g, ' ').trim()];
+function traduire() {
+  const bloc = (tag, a, cls = 'ar') => `<${tag} class="${cls}" dir="rtl">${a}</${tag}>`;
+  for (const g of document.querySelectorAll('.gros, .carte .ligne')) {
+    const lignes = [...g.querySelectorAll('.l')];
+    const a = ar(lignes.map(l => l.textContent).join(' '));
+    if (!a) continue;
+    const at = Math.max(...lignes.map(l => parseFloat(l.dataset.at))) + 0.35;
+    g.insertAdjacentHTML('beforeend', `<span class="l ar" data-at="${at}"><span>${a}</span></span>`);
+  }
+  for (const p of document.querySelectorAll('.legende p')) { const a = ar(p.textContent); if (a) p.insertAdjacentHTML('afterend', bloc('p', a)); }
+  for (const e of document.querySelectorAll('.legende b, .etiquette, .etiq, .carte .liste li')) {
+    const a = ar(e.textContent); if (a) e.insertAdjacentHTML('beforeend', bloc('span', a, 'ar-i'));
+  }
+  for (const e of document.querySelectorAll('.rafale span, .questions span')) {
+    const a = ar(e.textContent); if (a) e.insertAdjacentHTML('beforeend', bloc('small', a));
+  }
+  for (const e of document.querySelectorAll('.carte .petit, .accroche')) {
+    const a = ar(e.textContent); if (a) e.insertAdjacentHTML('beforeend', bloc('span', a));
+  }
+  for (const h of document.querySelectorAll('.horaires h2')) h.insertAdjacentHTML('beforeend', bloc('span', ar(h.textContent)));
+  for (const d of document.querySelectorAll('.horaires > div')) {
+    const jour = d.querySelector('span').textContent, heures = d.textContent.replace(jour, '');
+    d.insertAdjacentHTML('beforeend', bloc('span', `${ar(jour)} : ${ar(heures)}`));
+  }
+}
+traduire();
+
+// ——— Moteur : une seule fonction render(t), déterministe ———
+const stage = document.getElementById('stage');
+const coin = document.getElementById('coin');
+const scenes = [...document.querySelectorAll('.scene')];
+const FONDU = 0.4;
+let total = 0;
+for (const s of scenes) {
+  s._debut = total; s._duree = parseFloat(s.dataset.dur);
+  s._elems = [...s.querySelectorAll('[data-at]')];
+  s._photos = [...s.querySelectorAll('.plein')];
+  s._moities = [...s.querySelectorAll('.moitie')];
+  s._decoupes = [...s.querySelectorAll('.decoupe')];
+  total += s._duree;
+}
+const clamp = x => Math.min(1, Math.max(0, x));
+const sortie = x => 1 - Math.pow(1 - clamp(x), 3);
+const douce = x => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+
+let cale = false, policeOk = false;
+document.fonts.load('900 100px Archivo').then(() => { policeOk = true; });
+function caler() {
+  for (const t of document.querySelectorAll('.decoupe text')) {
+    t.setAttribute('font-size', 400);
+    const fs = Math.min(480, 400 * 1680 / t.getComputedTextLength());
+    t.setAttribute('font-size', fs);
+    const r = t.getExtentOfChar(t.getNumberOfChars() - 1);
+    t._px = r.x + r.width * 0.5;
+    t._py = parseFloat(t.getAttribute('y')) - fs * 0.075;
+    const c = t.cloneNode(true);
+    c.setAttribute('fill', 'none'); c.setAttribute('stroke', '#fff'); c.setAttribute('stroke-width', 2.5);
+    t.closest('svg').appendChild(c);
+    t._contour = c;
+  }
+  // les mots trop longs rétrécissent pour tenir dans l'écran
+  for (const m of document.querySelectorAll('.rafale span, .questions span')) {
+    const base = parseFloat(getComputedStyle(m).fontSize), w = m.scrollWidth;
+    if (w > 1680) m.style.fontSize = `${base * 1680 / w}px`;
+  }
+  cale = true;
+}
+function decoupe(svg, lt) {
+  const t = svg.querySelector('text');
+  const o = sortie((lt - 0.2) / 0.8);
+  t.setAttribute('fill-opacity', o);
+  t._contour.setAttribute('stroke-opacity', 0.55 * o);
+  const z = clamp((lt - parseFloat(svg.dataset.zoom)) / 1.1);
+  const k = Math.exp(Math.log(220) * Math.pow(z, 2.4));
+  const tr = `translate(${t._px} ${t._py}) scale(${k}) translate(${-t._px} ${-t._py})`;
+  t.setAttribute('transform', tr);
+  t._contour.setAttribute('transform', tr);
+  t._contour.setAttribute('stroke-width', 2.5 / k);
+  svg.style.visibility = z >= 1 ? 'hidden' : 'visible';
+}
+// Mouvements lents des photos, variés d'une scène à l'autre
+const KB = {
+  in: p => `scale(${1.02 + 0.09 * p})`,
+  out: p => `scale(${1.11 - 0.09 * p})`,
+  gauche: p => `scale(1.1) translateX(${2.5 - 5 * p}%)`,
+  droite: p => `scale(1.1) translateX(${-2.5 + 5 * p}%)`,
+};
+
+const hooks = {
+  logo(lt, s) {
+    const v = s.querySelector('.i-vert'), b = s.querySelector('.i-blanc');
+    const r = 1 - sortie((lt - 0.2) / 1.0);
+    v.style.transform = `translate(${-60 * r}px, ${35 * r}px)`;
+    b.style.transform = `translate(${60 * r}px, ${-35 * r}px)`;
+    v.style.opacity = b.style.opacity = 1 - r;
+  },
+  rafale(lt, s) {
+    const mots = [...s.querySelectorAll('.rafale span')];
+    let actif = -1;
+    mots.forEach((m, i) => { if (lt >= parseFloat(m.dataset.t)) actif = i; });
+    mots.forEach((m, i) => {
+      const p = i === actif ? sortie((lt - parseFloat(m.dataset.t)) / 0.25) : 0;
+      m.style.opacity = p;
+      m.style.transform = `translate(${(1 - p) * 60}px, -55%)`;
+    });
+  },
+  questions(lt, s) {
+    const qs = [...s.querySelectorAll('.questions span')];
+    qs.forEach((q, i) => {
+      // la dernière question reste affichée au-dessus de la réponse
+      const a = parseFloat(q.dataset.t), b = i < qs.length - 1 ? parseFloat(qs[i + 1].dataset.t) : Infinity;
+      const p = Math.min(sortie((lt - a) / 0.3), 1 - clamp((lt - b + 0.15) / 0.15));
+      q.style.opacity = p;
+      q.style.transform = `translateY(${(1 - sortie((lt - a) / 0.3)) * 40}px)`;
+    });
+  },
+};
+
+function render(t) {
+  if (!cale && policeOk) caler();
+  t = ((t % total) + total) % total;
+  for (const s of scenes) {
+    const lt = t - s._debut;
+    const actif = lt >= 0 && lt < s._duree;
+    s.style.visibility = actif ? 'visible' : 'hidden';
+    if (!actif) continue;
+    s.style.opacity = Math.min(1, lt / FONDU, (s._duree - lt) / FONDU);
+    stage.classList.toggle('clair', s.classList.contains('clair'));
+    coin.style.visibility = s.dataset.coin ? 'visible' : 'hidden';
+    for (const e of s._elems) {
+      const at = parseFloat(e.dataset.at);
+      if (e.dataset.fx === 'fade') {
+        const fin = e.dataset.fin ? 1 - sortie((lt - parseFloat(e.dataset.fin)) / 0.4) : 1;
+        e.style.opacity = Math.min(sortie((lt - at) / 0.6), fin);
+      } else {
+        e.firstElementChild.style.transform = `translateY(${(1 - sortie((lt - at) / 0.8)) * 110}%)`;
+      }
+    }
+    for (const img of s._photos) {
+      const de = parseFloat(img.dataset.de || 0);
+      const p = clamp((lt - de) / (s._duree - de));
+      img.style.opacity = de ? sortie((lt - de) / 0.8) : 1;
+      img.style.transform = (KB[img.dataset.kb] || KB.in)(p);
+    }
+    for (const m of s._moities) {
+      // chaque moitié glisse depuis son bord, puis zoome doucement
+      const g = douce((lt - parseFloat(m.dataset.glisse)) / 0.9);
+      const gauche = m.classList.contains('g');
+      m.style.transform = `translateX(${(gauche ? -1 : 1) * (1 - g) * 100}%)`;
+      m.style.visibility = g > 0 ? 'visible' : 'hidden';
+      m.firstElementChild.style.transform = `scale(${1.03 + 0.06 * clamp(lt / s._duree)})`;
+    }
+    if (cale) s._decoupes.forEach(svg => decoupe(svg, lt));
+    if (typeof apresScene === 'function') apresScene(s, lt);
+    if (s.dataset.hook) hooks[s.dataset.hook](lt, s);
+  }
+}
+
+function ajuster() {
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `translate(${(innerWidth - 1920 * k) / 2}px, ${(innerHeight - 1080 * k) / 2}px) scale(${k})`;
+}
+addEventListener('resize', ajuster);
+ajuster();
+window.__render = render;
+window.__total = total;
+if (!location.search.includes('export')) {
+  document.fonts.ready.then(() => {
+    const t0 = performance.now();
+    const boucle = now => { render((now - t0) / 1000); requestAnimationFrame(boucle); };
+    requestAnimationFrame(boucle);
+  });
+} else {
+  render(0);
+}
+</script>
+</body>
+</html>
