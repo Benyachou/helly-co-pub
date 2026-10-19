@@ -2,7 +2,7 @@ name = "helly-co-vote"
 main = "worker.js"
 compatibility_date = "2026-10-01"
 
-# Rempli après « wrangler kv namespace create VOTES »
+# Stockage des votes (créé le 2026-10-20)
 [[kv_namespaces]]
 binding = "VOTES"
-id = "A_REMPLIR"
+id = "f118df94a8694c668dc7fc6b61dc9bde"
