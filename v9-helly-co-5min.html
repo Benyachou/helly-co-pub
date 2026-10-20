@@ -97,6 +97,18 @@ html, body { width: 100%; height: 100%; background: #000; overflow: hidden; curs
 .horaires div + div { border-top: 3px solid #3A3B40; }
 .horaires span { display: block; color: #9A9BA0; font-size: 34px; }
 
+/* Logos des partenaires du transfert d'argent */
+.plaques { position: absolute; left: 110px; top: 90px; display: flex; gap: 18px; }
+.plaques span { display: flex; align-items: center; height: 92px; padding: 0 26px; border-radius: 14px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+.plaques img { height: 52px; }
+.plaques .ria img { height: 58px; }
+.mur { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 120px; }
+.mur .titre-mur { font-size: 46px; font-weight: 600; margin-bottom: 50px; }
+.mur .rangee { display: flex; gap: 40px; }
+.mur .rangee span { flex: 1; height: 280px; display: flex; align-items: center; justify-content: center; border-radius: 26px; background: #fff; box-shadow: 0 14px 40px rgba(0,0,0,.25); }
+.mur .rangee img { max-width: 78%; max-height: 52%; }
+.mur .petit { margin-top: 56px; font-size: 48px; font-weight: 500; }
+
 #coin { position: absolute; right: 90px; bottom: 96px; height: 54px; display: flex; gap: 14px; align-items: center; opacity: .9; }
 #coin .m { position: relative; width: 46px; height: 53px; }
 #coin .m img { position: absolute; inset: 0; width: 100%; }
@@ -146,13 +158,13 @@ const LISTE = [
   HORAIRES,
 
   // ——— Transfert d'argent ———
-  { type: 'decoupe', dur: 12, mot: 'Envoyé.', photos: ['billets-50', ['main-50', 4.4]], split: ['dirhams', 'monde', 6.6], reponse: ['Reçu.', 7.4],
+  { type: 'decoupe', dur: 12, plaques: 4.0, mot: 'Envoyé.', photos: ['billets-50', ['main-50', 4.4]], split: ['dirhams', 'monde', 6.6], reponse: ['Reçu.', 7.4],
     legendes: [['Transfert d’argent', 'Western Union, MoneyGram, Ria. En espèces ou par carte.', 4.0, 6.6], ['Transfert d’argent', 'Au Maroc et partout dans le monde, en toute sécurité.', 7.0]] },
-  { type: 'photo', dur: 8, photo: 'famille', kb: 'in', gros: ['À vos proches,', 'où qu’ils soient.'], taille: 't140', legende: ['Transfert d’argent', 'Envoyez de l’argent à votre famille, en toute sécurité.'] },
-  { type: 'carte', dur: 7, lignes: ['Western Union.', 'MoneyGram.', 'Ria.'], petit: 'En espèces ou par carte.' },
-  { type: 'decoupe', dur: 10, mot: 'Partout.', photos: ['monde'], legendes: [['Transfert d’argent', 'Au Maroc, en Afrique, en Europe et ailleurs.', 3.9]] },
+  { type: 'photo', dur: 8, plaques: 1.4, photo: 'famille', kb: 'in', gros: ['À vos proches,', 'où qu’ils soient.'], taille: 't140', legende: ['Transfert d’argent', 'Envoyez de l’argent à votre famille, en toute sécurité.'] },
+  { type: 'logos', dur: 7, titre: 'Transfert d’argent avec :', petit: 'En espèces ou par carte.' },
+  { type: 'decoupe', dur: 10, plaques: 3.9, mot: 'Partout.', photos: ['monde'], legendes: [['Transfert d’argent', 'Au Maroc, en Afrique, en Europe et ailleurs.', 3.9]] },
   { type: 'questions', dur: 9, questions: ['Au Maroc ?', 'En Europe ?', 'En Afrique ?', 'Plus loin ?'], reponse: 'On envoie.', petit: 'Western Union, MoneyGram, Ria.' },
-  { type: 'photo', dur: 8, photo: 'appel-video', kb: 'gauche', gros: ['Envoyé ici.', 'Reçu là-bas.'], taille: 't140', legende: ['Transfert d’argent', 'Western Union, MoneyGram, Ria.'] },
+  { type: 'photo', dur: 8, plaques: 1.4, photo: 'appel-video', kb: 'gauche', gros: ['Envoyé ici.', 'Reçu là-bas.'], taille: 't140', legende: ['Transfert d’argent', 'Western Union, MoneyGram, Ria.'] },
   { type: 'langues', dur: 9 },
 
   // ——— Démarches ———
@@ -193,7 +205,14 @@ const blocHoraires = (at) => `<div class="horaires">
   <div data-fx="fade" data-at="${at + 0.3}"><span>Lundi au jeudi, samedi</span>9h30 – 19h00, sans interruption</div>
   <div data-fx="fade" data-at="${at + 0.6}"><span>Vendredi</span>9h30 – 13h00 et 14h30 – 19h00</div></div>`;
 
+const LOGOS = ['western-union', 'moneygram', 'ria'].map(n => `<span class="${n}"><img src="assets/logos/${n}.png" alt=""></span>`).join('');
+const plaques = at => `<div class="plaques" data-fx="fade" data-at="${at}">${LOGOS}</div>`;
+
 const FABRIQUE = {
+  logos: s => ({ cls: 'verte', coin: false, html: `<div class="mur">
+      <div class="titre-mur" data-fx="fade" data-at="0.2">${s.titre}</div>
+      <div class="rangee">${LOGOS.split('</span>').filter(Boolean).map((l, i) => l.replace('<span', `<span data-fx="fade" data-at="${0.5 + i * 0.35}"`) + '</span>').join('')}</div>
+      <div class="petit" data-fx="fade" data-at="1.9">${s.petit}</div></div>` }),
   logo: s => ({ html: `<div class="centre">${logoBloc(true)}<p class="accroche" data-fx="fade" data-at="2.0">${s.accroche}</p></div>`, hook: 'logo' }),
   index: s => ({ cls: s.nuit ? 'nuit' : 'verte', coin: false, html: `<div class="carte">
       <div class="petit" style="margin:0 0 30px" data-fx="fade" data-at="0.2">${s.titre}</div>
@@ -244,6 +263,7 @@ for (const s of LISTE) {
   if (f.hook) el.dataset.hook = f.hook;
   if (f.coin) el.dataset.coin = 1;
   el.innerHTML = f.html;
+  if (s.plaques) el.insertAdjacentHTML('beforeend', plaques(s.plaques));
   conteneur.appendChild(el);
 }
 

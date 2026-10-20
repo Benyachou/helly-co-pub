@@ -48,6 +48,7 @@ AR = {
     'Réparation de téléphone': 'إصلاح الهواتف',
     'Accessoires': 'الإكسسوارات',
     'Transfert d’argent': 'تحويل الأموال',
+    'Transfert d’argent avec :': 'تحويل الأموال مع:',
     'Démarches administratives': 'الإجراءات الإدارية',
     'Bureautique': 'الطباعة والنسخ',
     'Réparé.': 'تم الإصلاح.',
@@ -150,7 +151,7 @@ function traduire() {
   for (const e of document.querySelectorAll('.rafale span, .questions span')) {
     const a = ar(e.textContent); if (a) e.insertAdjacentHTML('beforeend', bloc('small', a));
   }
-  for (const e of document.querySelectorAll('.carte .petit, .accroche')) {
+  for (const e of document.querySelectorAll('.carte .petit, .accroche, .mur .petit, .mur .titre-mur')) {
     const a = ar(e.textContent); if (a) e.insertAdjacentHTML('beforeend', bloc('span', a));
   }
   for (const h of document.querySelectorAll('.horaires h2')) h.insertAdjacentHTML('beforeend', bloc('span', ar(h.textContent)));
@@ -193,6 +194,9 @@ CSS_LUMIERE = '''
 .horaires h2 { color: var(--vert-fonce); }
 .horaires div + div { border-top-color: #DADCDF; }
 .nuit .carte .liste li::before { background: var(--vert-fonce); }
+.plaques { gap: 12px; }
+.plaques span { height: 70px; padding: 0 18px; box-shadow: 0 6px 18px rgba(0,0,0,.10); }
+.plaques img { height: 38px; } .plaques .ria img { height: 42px; }
 .cadre .bulle.g { left: 40px !important; top: 30px !important; }
 .cadre .bulle.d { right: 40px !important; top: 30px !important; left: auto !important; }
 '''
