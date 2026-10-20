@@ -3,7 +3,7 @@
 //   POST /vote {appareil, version}
 // Chaque appareil a un identifiant aléatoire (gardé dans son navigateur) :
 // un seul vote par appareil, qu'il peut changer.
-const VERSIONS = ['v10', 'v11', 'v12', 'v13'];
+const VERSIONS = ['v10', 'v11', 'v12', 'v13', 'v15'];
 const ORIGINE = 'https://benyachou.github.io';
 
 const entetes = {

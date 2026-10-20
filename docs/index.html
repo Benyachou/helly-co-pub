@@ -67,7 +67,7 @@ footer { margin-top: 64px; color: var(--gris); font-size: 15px; }
   </header>
 
   <h1>Quelle pub pour l’écran de la boutique ?</h1>
-  <p class="intro">Quatre versions de 5 minutes, qui tournent en boucle sur la télé. Regardez-les, puis votez pour celle que vous préférez. Un vote par téléphone, et vous pouvez changer d’avis.</p>
+  <p class="intro">Cinq versions de 5 minutes, qui tournent en boucle sur la télé. Regardez-les, puis votez pour celle que vous préférez. Un vote par téléphone, et vous pouvez changer d’avis.</p>
   <p id="message" role="status"></p>
 
   <section class="version" data-version="v10">
@@ -98,6 +98,14 @@ footer { margin-top: 64px; color: var(--gris); font-size: 15px; }
     <h2>Le film</h2>
     <p>La pub racontée comme un film, en quatre chapitres : la chute, la distance, le dossier, les petites choses. Image cinéma, grain de pellicule, et un générique de fin.</p>
     <video controls playsinline preload="metadata" poster="videos/v13-film.jpg" src="videos/v13-film.mp4"></video>
+    <div class="vote"><button type="button" aria-pressed="false">Je vote pour celle-ci</button>
+      <div class="jauge"><div class="barre"><span></span></div><b class="nb">0 vote</b></div></div>
+  </section>
+
+  <section class="version" data-version="v15">
+    <h2>Les gens d’ici</h2>
+    <p>Six personnages du quartier, six petits problèmes : un écran cassé, un envoi d’argent, des copies, la préfecture, une batterie à plat, un touriste perdu. Chacun trouve sa réponse chez Helly-Co.</p>
+    <video controls playsinline preload="metadata" poster="videos/v15-gens-d-ici.jpg" src="videos/v15-gens-d-ici.mp4"></video>
     <div class="vote"><button type="button" aria-pressed="false">Je vote pour celle-ci</button>
       <div class="jauge"><div class="barre"><span></span></div><b class="nb">0 vote</b></div></div>
   </section>

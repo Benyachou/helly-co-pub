@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Helly-Co Services — Les gens d’ici</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+@font-face { font-family: "Archivo"; src: url("fonts/archivo-latin.woff2") format("woff2"); font-weight: 100 900; font-stretch: 62% 125%; }
+@font-face { font-family: "Cormorant"; src: url("fonts/cormorant-italic-500.woff2") format("woff2"); font-weight: 500; font-style: italic; }
+:root { --vert: #A5CD39; --gris: #77787C; --encre: #1E1F22; --papier: #E4E1DB; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #000; overflow: hidden; cursor: none; }
+#stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden;
+  background: var(--papier); color: var(--encre); font-family: "Archivo", Arial, sans-serif; font-variant-numeric: lining-nums; }
+.scene { position: absolute; inset: 0; visibility: hidden; overflow: hidden; background: var(--papier); }
+.it { font-family: "Cormorant", Georgia, serif; font-style: italic; font-weight: 500; }
+
+/* Portrait */
+.portrait { position: absolute; inset: 0; will-change: transform; }
+.portrait img { width: 100%; height: 100%; object-fit: cover; }
+.portrait.miroir img { transform: scaleX(-1); }
+.voile { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(228,225,219,.92) 0%, rgba(228,225,219,.55) 34%, rgba(228,225,219,0) 55%); }
+
+/* Étiquette du personnage */
+.numero { position: absolute; left: 110px; top: 96px; font-size: 26px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--gris); }
+.numero b { color: var(--encre); }
+.nom { position: absolute; left: 104px; top: 150px; font-weight: 900; font-size: 190px; line-height: .9; letter-spacing: -0.045em; }
+.qui { position: absolute; left: 112px; top: 340px; font-size: 54px; color: #4a4b4f; }
+.l { display: block; overflow: hidden; padding-bottom: .06em; }
+.l > span { display: block; }
+
+/* Bulles */
+.bulle { position: absolute; left: 110px; top: 520px; max-width: 760px; padding: 30px 42px 36px; border-radius: 40px; background: #fff;
+  font-size: 50px; font-weight: 600; line-height: 1.18; letter-spacing: -0.01em; box-shadow: 0 24px 60px rgba(30,31,34,.16); transform-origin: 85% 100%; }
+.bulle::after { content: ""; position: absolute; right: -22px; bottom: 34px; border: 22px solid transparent; border-left: 34px solid #fff; border-right: 0; }
+.bulle .fantome { visibility: hidden; }
+.bulle .tape { position: absolute; left: 42px; top: 30px; right: 42px; }
+.bulle.oui { background: var(--encre); color: #fff; }
+.bulle.oui::after { border-left-color: var(--encre); }
+
+/* Panneau vert : la réponse de la boutique */
+.panneau { position: absolute; left: 0; top: 0; bottom: 0; width: 980px; background: var(--vert); clip-path: inset(0 100% 0 0); padding: 110px 0 0 110px; }
+.panneau .chez { display: flex; align-items: center; gap: 22px; font-size: 30px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+.panneau .chez img { height: 64px; filter: brightness(0); }
+.panneau h2 { margin-top: 46px; font-weight: 900; font-size: 128px; line-height: .92; letter-spacing: -0.04em; }
+.panneau ul { list-style: none; margin-top: 56px; }
+.panneau li { font-size: 56px; font-weight: 600; line-height: 1.32; display: flex; align-items: center; gap: 26px; }
+.panneau li::before { content: ""; width: 34px; height: 6px; background: var(--encre); flex: none; }
+.panneau .note { margin-top: 44px; font-size: 52px; }
+.plaques { display: flex; gap: 22px; margin-top: 60px; }
+.plaques span { display: flex; align-items: center; height: 110px; padding: 0 30px; border-radius: 16px; background: #fff; }
+.plaques img { height: 58px; }
+.langues li { font-size: 76px; font-weight: 800; }
+.langues .ar { font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+
+/* Tampon */
+.tampon { position: absolute; left: 112px; top: 540px; padding: 10px 34px 16px; border: 7px solid var(--vert); border-radius: 18px;
+  font-weight: 900; font-size: 92px; letter-spacing: -0.03em; color: var(--vert); background: rgba(255,255,255,.7); }
+
+/* Ouverture */
+.titre { position: absolute; left: 110px; top: 250px; font-weight: 900; font-size: 230px; line-height: .86; letter-spacing: -0.055em; }
+.titre em { font-style: normal; color: var(--vert); }
+.sous { position: absolute; left: 116px; top: 830px; font-size: 62px; color: #4a4b4f; }
+.vignettes { position: absolute; right: 110px; top: 110px; display: grid; grid-template-columns: repeat(2, 270px); gap: 24px; }
+.vignettes div, .equipe div { overflow: hidden; border-radius: 24px; background: #ccc; }
+.vignettes img, .equipe img { width: 100%; height: 100%; object-fit: cover; }
+.vignettes div { height: 270px; }
+.titre { top: 300px; }
+
+/* Tout le monde */
+.equipe { position: absolute; left: 110px; right: 110px; top: 300px; display: flex; gap: 26px; }
+.equipe div { flex: 1; height: 560px; position: relative; }
+.equipe span { position: absolute; left: 22px; bottom: 18px; font-weight: 800; font-size: 34px; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+.liste { position: absolute; left: 110px; top: 130px; white-space: nowrap; font-weight: 900; font-size: 78px; letter-spacing: -0.04em; display: flex; gap: 34px; }
+.liste span { color: var(--gris); }
+.final { position: absolute; left: 110px; top: 900px; font-weight: 900; font-size: 92px; letter-spacing: -0.04em; display: flex; align-items: center; gap: 30px; }
+.final img { height: 92px; }
+
+/* Services et horaires */
+.vert { background: var(--vert); }
+.grand { position: absolute; left: 110px; top: 110px; font-weight: 900; font-size: 120px; line-height: .92; letter-spacing: -0.045em; }
+.tuiles { position: absolute; left: 110px; right: 110px; top: 420px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+.tuile { background: var(--encre); color: #fff; border-radius: 30px; padding: 44px 38px; height: 540px; }
+.tuile b { display: block; font-size: 30px; color: var(--vert); letter-spacing: .1em; }
+.tuile h3 { margin-top: 26px; font-size: 52px; line-height: 1; letter-spacing: -0.03em; font-weight: 900; }
+.tuile p { margin-top: 28px; font-size: 31px; line-height: 1.4; color: #c9cac4; }
+.jours { position: absolute; left: 110px; top: 420px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; right: 110px; }
+.jour { background: #fff; border-radius: 30px; padding: 50px 56px; }
+.jour b { display: block; font-size: 34px; letter-spacing: .14em; text-transform: uppercase; color: var(--gris); }
+.jour p { margin-top: 24px; font-size: 74px; font-weight: 900; letter-spacing: -0.035em; line-height: 1.05; }
+.jour small { display: block; margin-top: 16px; font-size: 38px; color: #4a4b4f; }
+.parle { position: absolute; left: 110px; bottom: 100px; font-size: 52px; }
+.parle strong { font-weight: 800; }
+
+/* Fin */
+.logo { position: absolute; left: 50%; top: 190px; width: 300px; margin-left: -150px; height: 344px; }
+.logo img { position: absolute; inset: 0; width: 100%; }
+.marque { position: absolute; left: 50%; top: 580px; width: 720px; margin-left: -360px; }
+.services { position: absolute; left: 0; right: 0; top: 880px; text-align: center; font-size: 40px; color: #4a4b4f; letter-spacing: .02em; }
+
+/* Coin permanent */
+.coin { position: absolute; right: 70px; bottom: 56px; display: flex; align-items: center; gap: 16px; padding: 14px 26px 14px 18px; border-radius: 60px; background: rgba(255,255,255,.88); }
+.coin .m { position: relative; width: 44px; height: 50px; }
+.coin .m img { position: absolute; inset: 0; width: 100%; }
+.coin img.t { height: 40px; }
+.rideau { position: absolute; inset: 0; background: var(--vert); clip-path: circle(0% at 50% 50%); pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// ————————————————————————————————————————————————————————————————
+// « Les gens d’ici » : six personnages du quartier, six petits problèmes,
+// un seul endroit. Les portraits ont été créés par l’IA installée sur le PC
+// (ia-locale/personnages.py), sans le mentionner à l’écran. La liste décrit les scènes ; le moteur anime.
+// ————————————————————————————————————————————————————————————————
+const IMG = n => `assets/photos/ia-persos/${n}.jpg`;
+const PERSOS = [
+  { img: 'yanis', nom: 'Yanis', qui: '17 ans, lycéen.',
+    dit: 'J’ai fait tomber mon téléphone… dans l’escalier.',
+    titre: 'Réparation<br>de téléphone', liste: ['Écran', 'Batterie', 'Prise de charge', 'Caméra'],
+    reponse: 'Il est comme neuf ! Merci Helly-Co.' },
+  { img: 'hadj', nom: 'Hadj Mohamed', petit: true, qui: 'Le plus fidèle du quartier.',
+    dit: 'Je voudrais envoyer un peu d’argent à ma sœur, au Maroc.',
+    titre: 'Transfert<br>d’argent', plaques: true, note: 'Au Maroc et partout dans le monde.',
+    reponse: 'C’est envoyé. Elle va être contente.' },
+  { img: 'maman', nom: 'Samira', qui: 'Maman de trois enfants.',
+    dit: 'Il me faut des copies pour le dossier de mon fils.',
+    titre: 'Bureautique', liste: ['Impressions', 'Photocopies', 'Scans', 'Reliures', 'Plastifications'],
+    reponse: 'Imprimé, copié, relié. Parfait !' },
+  { img: 'retraite', nom: 'Gérard', qui: '68 ans, retraité.',
+    dit: 'Le site de la préfecture… j’y comprends rien.',
+    titre: 'Démarches', liste: ['Préfecture', 'Consulats', 'Formulaires', 'Rendez-vous'],
+    reponse: 'Ah ben voilà. C’était pas sorcier.' },
+  { img: 'livreur', nom: 'Mehdi', qui: 'Livreur, toujours pressé.',
+    dit: 'Plus de batterie… et ma tournée commence !',
+    titre: 'Accessoires', liste: ['Chargeurs', 'Câbles', 'Coques et protections', 'Recharges'],
+    reponse: 'Chargé à bloc. Allez, j’y vais !' },
+  { img: 'touriste', nom: 'Tom', qui: 'De passage, venu de Manchester.',
+    dit: 'Hello! Do you speak English?',
+    titre: 'On parle<br>votre langue', langues: true,
+    reponse: 'Lovely. Thank you so much!' },
+];
+const LISTE = [
+  { type: 'ouverture', dur: 14 },
+  ...PERSOS.map((p, i) => ({ type: 'perso', dur: 34, p, n: i + 1 })),
+  { type: 'tous', dur: 20 },
+  { type: 'services', dur: 22 },
+  { type: 'horaires', dur: 22 },
+  { type: 'fin', dur: 18 },
+];
+
+// ——— Petits outils ———
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, p) => a + (b - a) * p;
+const sortie = x => { x = clamp(x); return 1 - Math.pow(1 - x, 3); };
+const ressort = x => { x = clamp(x); return 1 + 2.2 * Math.pow(x - 1, 3) + 1.2 * Math.pow(x - 1, 2); };
+const lignes = (txt, at, pas = .14) => txt.split('<br>').map((m, i) => `<span class="l" data-at="${at + i * pas}"><span>${m}</span></span>`).join('');
+const MARK = '<img src="assets/mark-vert.png" alt=""><img src="assets/mark-gris.png" alt="">';
+const LOGOS = ['western-union', 'moneygram', 'ria'].map(n => `<span><img src="assets/logos/${n}.png" alt=""></span>`).join('');
+const bulle = (txt, at, fin, oui) => `<div class="bulle${oui ? ' oui' : ''}" data-bulle="${at}" data-fin="${fin}">
+  <span class="fantome">${txt}</span><span class="tape" data-txt="${txt}"></span></div>`;
+
+// ——— Fabrication des scènes ———
+const FABRIQUE = {
+  ouverture: () => `
+    <div class="vignettes">${PERSOS.slice(0, 6).map((p, i) => `<div data-pop="${1.2 + i * .35}"><img src="${IMG(p.img)}" alt="" style="object-position:72% 30%"></div>`).join('')}</div>
+    <div class="titre">${lignes('Les gens<br><em>d’ici.</em>', .3, .25)}</div>
+    <div class="sous" data-at="4.2">Six petits problèmes. <span class="it">Un seul endroit.</span></div>`,
+  perso: s => {
+    const p = s.p;
+    const corps = p.langues
+      ? `<ul class="langues">${['Français', '<span class="ar">العربية</span>', 'English'].map((l, i) => `<li data-at="${15.4 + i * .5}">${l}</li>`).join('')}</ul>`
+      : p.plaques ? `<div class="plaques" data-at="15.6">${LOGOS}</div><p class="note" data-at="16.6">${p.note}</p>`
+      : `<ul>${p.liste.map((l, i) => `<li data-at="${15.4 + i * .45}">${l}</li>`).join('')}</ul>`;
+    return `
+    <div class="portrait"><img src="${IMG(p.img)}" alt=""></div><div class="voile"></div>
+    <div class="numero" data-at=".4">Les gens d’ici · <b>n° ${s.n}</b></div>
+    <div class="nom" style="${p.petit ? 'font-size:122px' : ''}">${lignes(p.nom, .6)}</div>
+    <div class="qui" data-at="1.6">${p.qui}</div>
+    ${bulle(p.dit, 3.2, 12.4)}
+    <div class="panneau" data-panneau="12.4,24.6"><div class="chez">Chez <img src="assets/texte-sur-clair.png" alt="Helly-Co"></div>
+      <h2>${lignes(p.titre, 13.4)}</h2>${corps}</div>
+    <div class="tampon" data-tampon="25.6">C’est réglé.</div>
+    ${bulle(p.reponse, 27.2, 33.4, true)}`;
+  },
+  tous: () => `
+    <div class="liste">${['Un écran.', 'Un envoi.', 'Un dossier.', 'Une copie.'].map((m, i) => `<span data-at="${.4 + i * .7}">${m}</span>`).join('')}</div>
+    <div class="equipe">${PERSOS.map((p, i) => `<div data-pop="${.8 + i * .3}"><img src="${IMG(p.img)}" alt="" style="object-position:72% 30%"><span>${p.nom.split(' ')[0]}</span></div>`).join('')}</div>
+    <div class="final" data-at="5.6">Un seul endroit : <img src="assets/texte-sur-clair.png" alt="Helly-Co"></div>`,
+  services: () => `<div class="scene-fond vert" style="position:absolute;inset:0"></div>
+    <div class="grand">${lignes('Tout ça,<br>au même comptoir.', .3)}</div>
+    <div class="tuiles">${[
+      ['01', 'Réparation de téléphone', 'Écran, batterie, prise de charge, caméra.'],
+      ['02', 'Transfert d’argent', 'Western Union, MoneyGram, Ria.'],
+      ['03', 'Démarches', 'Préfecture, consulats, formulaires, rendez-vous.'],
+      ['04', 'Bureautique et accessoires', 'Impressions, copies, scans, reliures. Câbles, chargeurs, coques, recharges.'],
+    ].map(([n, h, t], i) => `<div class="tuile" data-pop="${1.4 + i * .4}"><b>${n}</b><h3>${h}</h3><p>${t}</p></div>`).join('')}</div>`,
+  horaires: () => `
+    <div class="grand">${lignes('Passez<br>nous voir.', .3)}</div>
+    <div class="jours">
+      <div class="jour" data-pop="1.4"><b>Lundi au jeudi, et samedi</b><p>9h30 – 19h00</p><small>Sans interruption</small></div>
+      <div class="jour" data-pop="1.8"><b>Vendredi</b><p>9h30 – 13h00<br>14h30 – 19h00</p></div></div>
+    <div class="parle" data-at="3.4">On vous répond en <strong>français</strong>, en <strong>arabe</strong> et en <strong>anglais</strong>.</div>`,
+  fin: () => `
+    <div class="logo" data-pop=".4">${MARK}</div>
+    <div class="marque" data-at="1.6"><img src="assets/texte-sur-clair.png" alt="Helly-Co Services" style="width:100%"></div>
+    <div class="services" data-at="2.8">Réparation · Transfert d’argent · Démarches · Bureautique · Accessoires</div>`,
+};
+
+const stage = document.getElementById('stage');
+let total = 0;
+const scenes = LISTE.map(s => {
+  const el = document.createElement('div');
+  el.className = 'scene';
+  el.innerHTML = FABRIQUE[s.type](s);
+  el._debut = total; el._duree = s.dur; el._type = s.type;
+  total += s.dur;
+  stage.appendChild(el);
+  return el;
+});
+stage.insertAdjacentHTML('beforeend', `<div class="coin"><div class="m">${MARK}</div><img class="t" src="assets/texte-sur-clair.png" alt=""></div><div class="rideau"></div>`);
+const coin = stage.querySelector('.coin'), rideau = stage.querySelector('.rideau');
+
+// ——— Moteur : une seule fonction render(t), déterministe ———
+function render(t) {
+  t = ((t % total) + total) % total;
+  for (const s of scenes) {
+    const lt = t - s._debut;
+    const actif = lt >= 0 && lt < s._duree;
+    s.style.visibility = actif ? 'visible' : 'hidden';
+    if (!actif) continue;
+    // rideau vert circulaire entre deux scènes
+    const ferme = clamp((lt - (s._duree - .7)) / .7);
+    rideau.style.clipPath = `circle(${Math.max(1 - sortie(lt / .7), ferme * ferme) * 120}% at ${ferme ? 85 : 15}% 50%)`;
+    coin.style.visibility = ['perso', 'tous', 'horaires'].includes(s._type) ? 'visible' : 'hidden';
+
+    for (const e of s.querySelectorAll('[data-at]')) {
+      const at = +e.dataset.at;
+      if (e.classList.contains('l')) e.firstElementChild.style.transform = `translateY(${(1 - sortie((lt - at) / .8)) * 110}%)`;
+      else { const p = sortie((lt - at) / .7); e.style.opacity = p; e.style.transform = `translateY(${(1 - p) * 30}px)`; }
+    }
+    for (const e of s.querySelectorAll('[data-pop]')) {
+      const p = clamp((lt - e.dataset.pop) / .6);
+      e.style.opacity = clamp(p * 3);
+      e.style.transform = `scale(${lerp(.86, 1, ressort(p))})`;
+    }
+    for (const b of s.querySelectorAll('[data-bulle]')) {
+      const at = +b.dataset.bulle, fin = +b.dataset.fin;
+      const p = clamp((lt - at) / .45), q = clamp((lt - fin) / .3);
+      b.style.opacity = p * (1 - q);
+      b.style.transform = `scale(${lerp(.6, 1, ressort(p)) * (1 - q * .2)})`;
+      const tape = b.querySelector('.tape'), txt = tape.dataset.txt;
+      tape.textContent = txt.slice(0, Math.floor(clamp((lt - at - .3) * 26, 0, txt.length)));
+    }
+    if (s._type === 'perso') {
+      const [a, f] = s.querySelector('[data-panneau]').dataset.panneau.split(',').map(Number);
+      const ouvert = sortie((lt - a) / .9) * (1 - sortie((lt - f) / .8));
+      s.querySelector('.panneau').style.clipPath = `inset(0 ${100 - ouvert * 100}% 0 0)`;
+      // le portrait avance doucement et s'écarte quand le panneau arrive
+      s.querySelector('.portrait').style.transform = `scale(${1.04 + lt / s._duree * .07}) translateX(${ouvert * 7}%)`;
+      // après la réponse, l'image s'éclaire un peu
+      const apres = sortie((lt - 25) / 1.5);
+      s.querySelector('.portrait img').style.filter = `saturate(${.82 + apres * .3}) brightness(${.97 + apres * .07})`;
+      const ta = s.querySelector('.tampon'), pt = clamp((lt - ta.dataset.tampon) / .5);
+      ta.style.opacity = clamp(pt * 4) * (1 - clamp((lt - 26.9) / .3));
+      ta.style.transform = `rotate(-6deg) scale(${lerp(2.2, 1, sortie(pt))})`;
+    }
+  }
+}
+
+function ajuster() {
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transform = `translate(${(innerWidth - 1920 * k) / 2}px, ${(innerHeight - 1080 * k) / 2}px) scale(${k})`;
+}
+addEventListener('resize', ajuster);
+ajuster();
+window.__render = render;
+window.__total = total;
+if (!location.search.includes('export')) {
+  document.fonts.ready.then(() => {
+    const t0 = performance.now();
+    const boucle = now => { render((now - t0) / 1000); requestAnimationFrame(boucle); };
+    requestAnimationFrame(boucle);
+  });
+} else {
+  render(0);
+}
+</script>
+</body>
+</html>
