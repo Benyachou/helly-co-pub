@@ -31,7 +31,3 @@ export-*.log
 /assets/photos/hd/femme-tel.jpg
 vote/.wrangler/
 
-# images IA en attente de validation
-/assets/photos/ia/
-/planche-ia.png
-/v14-helly-co-film-ia.*
