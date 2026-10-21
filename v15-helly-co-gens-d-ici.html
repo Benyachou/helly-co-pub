@@ -47,9 +47,9 @@ html, body { width: 100%; height: 100%; background: #000; overflow: hidden; curs
 .panneau li { font-size: 56px; font-weight: 600; line-height: 1.32; display: flex; align-items: center; gap: 26px; }
 .panneau li::before { content: ""; width: 34px; height: 6px; background: var(--encre); flex: none; }
 .panneau .note { margin-top: 44px; font-size: 52px; }
-.plaques { display: flex; gap: 22px; margin-top: 60px; }
-.plaques span { display: flex; align-items: center; height: 110px; padding: 0 30px; border-radius: 16px; background: #fff; }
-.plaques img { height: 58px; }
+.plaques { display: flex; gap: 16px; margin-top: 60px; }
+.plaques span { display: flex; align-items: center; height: 104px; padding: 0 24px; border-radius: 16px; background: #fff; }
+.plaques img { height: 50px; }
 .langues li { font-size: 76px; font-weight: 800; }
 .langues .ar { font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
 
@@ -176,7 +176,7 @@ const FABRIQUE = {
     return `
     <div class="portrait"><img src="${IMG(p.img)}" alt=""></div><div class="voile"></div>
     <div class="numero" data-at=".4">Les gens d’ici · <b>n° ${s.n}</b></div>
-    <div class="nom" style="${p.petit ? 'font-size:122px' : ''}">${lignes(p.nom, .6)}</div>
+    <div class="nom" style="${p.petit ? 'font-size:108px' : ''}">${lignes(p.nom, .6)}</div>
     <div class="qui" data-at="1.6">${p.qui}</div>
     ${bulle(p.dit, 3.2, 12.4)}
     <div class="panneau" data-panneau="12.4,24.6"><div class="chez">Chez <img src="assets/texte-sur-clair.png" alt="Helly-Co"></div>
